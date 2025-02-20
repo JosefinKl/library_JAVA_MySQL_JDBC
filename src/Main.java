@@ -6,6 +6,7 @@ public class Main {
         String user = "root";
         String password = System.getenv("MYSQL_PASSWORD");
 
+        new LogIn.logInMenu(url, user, password);
         new ConsoleMenu().showMenu(url, user, password);
 
 
