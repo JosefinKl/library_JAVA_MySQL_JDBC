@@ -17,22 +17,42 @@ public class ConsoleMenu {
         switch (choice) {
             case "1":
                 showBooks(url, user, password);
-
+                loanBook();
                 break;
             case "0":
                 return;
             default:
                 System.out.println("Invalid choice, try again");
+                showMenu(url, user, password);
 
         }
     }
     public void loanBook(){
         System.out.println("Do you want to loan one of the books, insert the ID-number (to quit, write QUIT)?");
-        String choice = sc.nextLine();
-        if(choice.equals("QUIT")){
+        String choice = sc.next();
+        boolean bookAvailable = false;
+        if (choice.equals("QUIT")) {
             return;
-        } else if (choice ) {
-            
+        }
+        try {
+            int choiceID = Integer.parseInt(choice);
+            for (int element : availableID) {
+                if (element == choiceID) {
+                    bookAvailable = true;
+                    break;
+                }
+            }
+            if (bookAvailable) {
+                System.out.println("The book is available");
+
+
+            } else {
+                System.out.println("The book is not available/Invalid choice");
+                loanBook();
+            }
+        }catch (Exception e){
+            System.out.println("Invalid choice, try again");
+            loanBook();
         }
 
 
