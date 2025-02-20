@@ -3,12 +3,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Date;
+import java.time.LocalDate;
 
 public class ConsoleMenu {
     private Scanner sc = new Scanner(System.in);
     ArrayList<Integer> availableID = new ArrayList<>(Arrays.asList());
 
-    public void showMenu (String url, String user, String password, String isAdmin){
+    public void showMenu (String url, String user, String password, String isAdmin, Integer userID){
         System.out.println("----Menu----");
         System.out.println("1. All books");
         System.out.println("2. Loan a book");
@@ -25,18 +27,19 @@ public class ConsoleMenu {
         switch (choice) {
             case "1":
                 showBooks(url, user, password);
-                showMenu(url, user, password, isAdmin);
+                showMenu(url, user, password, isAdmin, userID);
                 break;
             case "2":
                 showBooks(url, user, password);
-                loanBook();
+                loanBook(url, user, password, userID);
                 break;
             case "3":
                 //return book
                 break;
             case "4":
                 //Current loans
-                System.out.println("case 4");
+                seeLoanedBooks(url, user, password, userID);
+
                 break;
             case "5":
                 //add a book
@@ -52,12 +55,12 @@ public class ConsoleMenu {
                 return;
             default:
                 System.out.println("Invalid choice, try again");
-                showMenu(url, user, password, isAdmin);
+                showMenu(url, user, password, isAdmin, userID);
 
         }
     }
-    public void loanBook(){
-        System.out.println("Do you want to loan one of the books, insert the ID-number (to quit, write QUIT)?");
+    public void loanBook(String url, String user, String password, Integer userID){
+        System.out.println("Do you want to loan one of the books, insert the ID-number of the book (to quit, write QUIT)?");
         String choice = sc.next();
         boolean bookAvailable = false;
         if (choice.equals("QUIT")) {
@@ -72,18 +75,61 @@ public class ConsoleMenu {
                 }
             }
             if (bookAvailable) {
-                System.out.println("The book is available");
+                Date currentDate = new Date();
+                java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+                LocalDate localDate = sqlDate.toLocalDate();
+                LocalDate newDate = localDate.plusDays(30);
+                java.sql.Date newSqlDate = java.sql.Date.valueOf(newDate);
+
+
+
+                Connection connection = DriverManager.getConnection(url, user, password);
+                String query = "insert into loans (user_id, book_id, loan_date, return_date) values (?, ?, ?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setInt(2, choiceID);
+                preparedStatement.setDate(3, sqlDate);
+                preparedStatement.setDate(4, newSqlDate);
+
+                Integer int1 = preparedStatement.executeUpdate();
+                System.out.println("The book is loaned");
 
 
             } else {
                 System.out.println("The book is not available/Invalid choice");
-                loanBook();
+                loanBook(url, user, password, userID);
             }
         }catch (Exception e){
             System.out.println("Invalid choice, try again");
-            loanBook();
+            loanBook(url, user, password, userID);
         }
 
+
+    }
+    public void seeLoanedBooks(String url, String user, String password, Integer userID) {
+        try {
+            Connection connection = DriverManager.getConnection(url, user, password);
+            String query = "select * from loans where user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String user_id = resultSet.getString("user_id");
+                String book_id = resultSet.getString("book_id");
+                String loan_date = resultSet.getString("loan_date");
+                String return_date = resultSet.getString("return_date");
+
+
+                System.out.println(book_id + " : " + loan_date + " : " + return_date);
+            }
+
+        } catch(SQLException e) {
+            System.out.println("Data connection error");
+        };
+    }
+    public void returnBook(String url, String user, String password, Integer userID) {
 
     }
 
@@ -111,7 +157,7 @@ public class ConsoleMenu {
                 System.out.println(id + " : " + title + " : " + author + " : " + available);
             }
         } catch (SQLException e) {
-            System.out.println("Databasanslutning misslyckad");
+            System.out.println("Data connection error");
         };
     }
 

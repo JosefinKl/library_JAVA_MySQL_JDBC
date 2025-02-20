@@ -5,6 +5,7 @@ public class LogIn {
     private Scanner sc = new Scanner(System.in);
     List<User> users = new ArrayList<User>();
     String isAdmin = "false";
+    Integer userID = null;
 
     public void logInMenu(String url, String user, String password) {
         System.out.println("Enter your username");
@@ -41,11 +42,13 @@ public class LogIn {
 
         if (!users.isEmpty()) {
             if (inputPassword.equals(passwordUser)) {
+                userID = users.get(0).getId();
+                System.out.println(userID);
                 System.out.println("You are logged in as " + inputUsername);
                 if (inputUsername.equals("admin")) {
                     isAdmin = "true";
                 }
-                new ConsoleMenu().showMenu(url, user, password, isAdmin);
+                new ConsoleMenu().showMenu(url, user, password, isAdmin, userID);
 
             } else  {
                 System.out.println("incorrect password/username");
