@@ -4,6 +4,7 @@ import java.util.*;
 public class LogIn {
     private Scanner sc = new Scanner(System.in);
     List<User> users = new ArrayList<User>();
+    String isAdmin = "false";
 
     public void logInMenu(String url, String user, String password) {
         System.out.println("Enter your username");
@@ -41,7 +42,10 @@ public class LogIn {
         if (!users.isEmpty()) {
             if (inputPassword.equals(passwordUser)) {
                 System.out.println("You are logged in as " + inputUsername);
-                new ConsoleMenu().showMenu(url, user, password);
+                if (inputUsername.equals("admin")) {
+                    isAdmin = "true";
+                }
+                new ConsoleMenu().showMenu(url, user, password, isAdmin);
 
             } else  {
                 System.out.println("incorrect password/username");

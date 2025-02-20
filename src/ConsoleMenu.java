@@ -8,22 +8,51 @@ public class ConsoleMenu {
     private Scanner sc = new Scanner(System.in);
     ArrayList<Integer> availableID = new ArrayList<>(Arrays.asList());
 
-    public void showMenu (String url, String user, String password){
-        System.out.println("----Meny----");
-        System.out.println("1. Se alla böcker");
+    public void showMenu (String url, String user, String password, String isAdmin){
+        System.out.println("----Menu----");
+        System.out.println("1. All books");
+        System.out.println("2. Loan a book");
+        System.out.println("3. Return a book");
+        System.out.println("4. Current loans");
+        if (isAdmin == "true"){
+            System.out.println("5. Add book");
+            System.out.println("6. Remove book");
+            System.out.println("7. List all books");
+        }
         System.out.println("0. Avsluta");
 
         String choice = sc.nextLine();
         switch (choice) {
             case "1":
                 showBooks(url, user, password);
+                showMenu(url, user, password, isAdmin);
+                break;
+            case "2":
+                showBooks(url, user, password);
                 loanBook();
+                break;
+            case "3":
+                //return book
+                break;
+            case "4":
+                //Current loans
+                System.out.println("case 4");
+                break;
+            case "5":
+                //add a book
+                break;
+            case "6":
+                //remove book
+                System.out.println("case 6");
+                break;
+            case "7":
+                //all books
                 break;
             case "0":
                 return;
             default:
                 System.out.println("Invalid choice, try again");
-                showMenu(url, user, password);
+                showMenu(url, user, password, isAdmin);
 
         }
     }
