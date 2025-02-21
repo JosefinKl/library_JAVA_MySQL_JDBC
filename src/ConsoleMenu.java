@@ -145,13 +145,25 @@ public class ConsoleMenu {
                 if (element == choiceID) {
                     try {
                         Connection connection = DriverManager.getConnection(url, user, password);
-                        String query = "DELETE FROM loans WHERE id = ?";
+                        String query = "DELETE FROM loans WHERE book_id = ?";
 
                         PreparedStatement preparedStatement = connection.prepareStatement(query);
                         preparedStatement.setInt(1, choiceID);
                         Integer int1 = preparedStatement.executeUpdate();
-                        System.out.println("The book is returned");
-                        showMenu(url, user, password, isAdmin, userID);
+
+                        try {
+                            Connection connection2 = DriverManager.getConnection(url, user, password);
+                            String query2 = "update books set available = 'available' where id = ?";
+                            PreparedStatement preparedStatement2 = connection2.prepareStatement(query2);
+                            preparedStatement2.setInt(1, choiceID);
+                            Integer int2 = preparedStatement2.executeUpdate();
+                            System.out.println("The book is returned");
+
+                        }catch (SQLException e) {
+                            System.out.println("Data connection error");
+                        };
+
+
 
                     } catch (SQLException e) {
                         System.out.println("Data connection error");
@@ -195,6 +207,7 @@ public class ConsoleMenu {
     }
 
     private void showBooks(String url, String user, String password){
+        availableID.clear();
         try {
 
             Connection connection = DriverManager.getConnection(url, user, password);
