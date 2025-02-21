@@ -109,9 +109,9 @@ public class ConsoleMenu {
     public void seeLoanedBooks(String url, String user, String password, Integer userID) {
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
-            String query = "select * from loans where user_id = ?";
+            String query = "SELECT books.title, books.author, loans.loan_date, loans.return_date FROM books INNER JOIN loans ON books.id=loans.book_id where user_id=1";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, userID);
+            //preparedStatement.setInt(1, userID);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
