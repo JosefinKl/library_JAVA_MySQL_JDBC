@@ -1,1 +1,8 @@
+Library loaning system.
 
+To use the system log in as a user or admin:
+username: josefin  password: 123
+username: adan	   password: 123
+username: admin	   password: admin1
+
+admin is an administrator, can't loan/return books but can add books to the system and delete books. 
