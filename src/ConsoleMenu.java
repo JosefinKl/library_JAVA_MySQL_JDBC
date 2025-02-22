@@ -10,6 +10,7 @@ public class ConsoleMenu {
     private Scanner sc = new Scanner(System.in);
     ArrayList<Integer> availableID = new ArrayList<>(Arrays.asList());
     ArrayList<Integer> loanedID = new ArrayList<>(Arrays.asList());
+    ArrayList<Integer> allBookIDinList = new ArrayList<>(Arrays.asList());
 
     public void showMenu (String url, String user, String password, String isAdmin, Integer userID){
         System.out.println("----Menu----");
@@ -50,9 +51,9 @@ public class ConsoleMenu {
                 showMenu(url, user, password, isAdmin, userID);
                 break;
             case "6":
-                //remove book
+
+                deleteBook(url, user, password);
                 showMenu(url, user, password, isAdmin, userID);
-                System.out.println("case 6");
                 break;
             case "7":
                 //all books
@@ -140,7 +141,6 @@ public class ConsoleMenu {
         try {
             int choiceID = Integer.parseInt(choice);
 
-
             for (int element : loanedID) {
                 if (element == choiceID) {
                     try {
@@ -202,12 +202,51 @@ public class ConsoleMenu {
             System.out.println("Data connection error");
         };
     }
-    public void returnBook(String url, String user, String password, Integer userID) {
 
+
+    private void deleteBook(String url, String user, String password) {
+        showBooks(url, user, password);
+        System.out.println("Which book to delete, insert the ID-number of the book. To quit write QUIT");
+        String choice = sc.next();
+        boolean bookPartOfList = false;
+        if (choice.equals("QUIT")) {
+            return;
+        }
+        try {
+            int choiceID = Integer.parseInt(choice);
+
+            for (int element : allBookIDinList) {
+                if (element == choiceID) {
+                    bookPartOfList = true;
+                    break;
+                }
+            }
+            if (bookPartOfList) {
+
+                try {
+                    Connection connection = DriverManager.getConnection(url, user, password);
+                    String query = "delete from books where id = ?";
+                    PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setInt(1, choiceID);
+
+
+                    Integer int1 = preparedStatement.executeUpdate();
+
+                } catch (SQLException e) {
+                    System.out.println("Data connection error");
+                }
+                ;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Invalid choice, try again");
+        }
+        ;
     }
 
     private void showBooks(String url, String user, String password){
         availableID.clear();
+        allBookIDinList.clear();
         try {
 
             Connection connection = DriverManager.getConnection(url, user, password);
@@ -223,6 +262,7 @@ public class ConsoleMenu {
                 String title = resultSet.getString("title");
                 String author = resultSet.getString("author");
                 String available = resultSet.getString("available");
+                allBookIDinList.add(id);
                 if (Objects.equals(available, "available")){
                     availableID.add(id);
                     //System.out.println(availableID);
