@@ -7,6 +7,7 @@ public class LogIn {
     String isAdmin = "false";
     Integer userID = null;
 
+    //Menu to log in
     public void logInMenu(String url, String user, String password) {
         System.out.println("Enter your username");
         String inputUsername = sc.nextLine();
@@ -15,7 +16,7 @@ public class LogIn {
         String inputPassword = sc.nextLine();
         String passwordUser = "";
 
-
+        //Check if the input is a valid user/password combination
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
             String query = "SELECT * FROM users where user_name = ?";

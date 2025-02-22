@@ -75,27 +75,35 @@ public class ConsoleMenu {
 
         }
     }
+
+    //function to loan a book
     public void loanBook(String url, String user, String password, Integer userID, String isAdmin){
         System.out.println("Do you want to loan one of the books, insert the ID-number of the book (to quit, write QUIT)?");
         String choice = sc.next();
 
-        boolean bookAvailable = false;
+        boolean bookAvailable = false; //used to check if book is available
         if (choice.equals("QUIT")) {
             return;
         }
+
+        //to catch if invalid input and SQL error
         try {
             int choiceID = Integer.parseInt(choice);
+
+            //check if book is available
             for (int element : availableID) {
                 if (element == choiceID) {
                     bookAvailable = true;
                     break;
                 }
             }
+
+            //if the book is available loan it
             if (bookAvailable) {
-                Date currentDate = new Date();
+                Date currentDate = new Date();  //today's date will be used as loan date
                 java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
                 LocalDate localDate = sqlDate.toLocalDate();
-                LocalDate newDate = localDate.plusDays(30);
+                LocalDate newDate = localDate.plusDays(30);  //the loan time is 30 days
                 java.sql.Date newSqlDate = java.sql.Date.valueOf(newDate);
 
 
@@ -110,6 +118,7 @@ public class ConsoleMenu {
 
                 Integer int1 = preparedStatement.executeUpdate();
 
+                //Set the loaned book as unavailable
                 try {
                     Connection connection2 = DriverManager.getConnection(url, user, password);
                     String query2 = "update books set available = 'unavailable' where id = ?";
@@ -137,6 +146,7 @@ public class ConsoleMenu {
 
     }
 
+    //function to unloan a book
     public void unloanBook(String url, String user, String password, Integer userID, String isAdmin) {
         System.out.println("Your loans are:");
         seeLoanedBooks(url, user, password, userID);
@@ -151,6 +161,8 @@ public class ConsoleMenu {
 
             for (int element : loanedID) {
                 if (element == choiceID) {
+
+                    //Delete book from loan table
                     try {
                         Connection connection = DriverManager.getConnection(url, user, password);
                         String query = "DELETE FROM loans WHERE book_id = ?";
@@ -159,6 +171,7 @@ public class ConsoleMenu {
                         preparedStatement.setInt(1, choiceID);
                         Integer int1 = preparedStatement.executeUpdate();
 
+                        //Set book as available again
                         try {
                             Connection connection2 = DriverManager.getConnection(url, user, password);
                             String query2 = "update books set available = 'available' where id = ?";
@@ -183,6 +196,8 @@ public class ConsoleMenu {
             System.out.println("Invalid choice, try again");
         }
     }
+
+    //To see all loaned books for the current user
     public void seeLoanedBooks(String url, String user, String password, Integer userID) {
         loanedID.clear();
         try {
@@ -211,6 +226,7 @@ public class ConsoleMenu {
         };
     }
 
+    //Administrator can add new books
     private void addBook (String url, String user, String password){
         sc.nextLine(); //read all to empty scanner.
         System.out.println("Enter book title: ");
@@ -222,6 +238,7 @@ public class ConsoleMenu {
         if (choice.equals("QUIT")) {
             return;
         }else if (choice.equals("Y")) {
+            //Add new books with status available
             try{
                 Connection connection = DriverManager.getConnection(url, user, password);
                 String query = "insert into books (title, author, available) values (?, ?, 'available')";
@@ -238,6 +255,7 @@ public class ConsoleMenu {
         }
     }
 
+    //Administrator can delete books
     private void deleteBook(String url, String user, String password) {
         showBooks(url, user, password);
         System.out.println("Which book to delete, insert the ID-number of the book. To quit write QUIT");
@@ -278,6 +296,7 @@ public class ConsoleMenu {
         ;
     }
 
+    //Show all books and their statuses
     private void showBooks(String url, String user, String password){
         availableID.clear();
         allBookIDinList.clear();
