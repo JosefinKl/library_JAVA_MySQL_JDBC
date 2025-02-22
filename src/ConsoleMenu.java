@@ -25,41 +25,52 @@ public class ConsoleMenu {
         }
         System.out.println("0. Avsluta");
 
-        String choice = sc.nextLine();
+        int choice;
+        try {
+        choice = sc.nextInt();
+        }
+        catch (Exception e) {
+            System.out.println("Invalid choice");
+            sc.nextLine();  //read the whole line so empty the scanner.
+            showMenu(url, user, password, isAdmin, userID);
+            return;
+        }
+
+
         switch (choice) {
-            case "1":
+            case 1:
                 showBooks(url, user, password);
                 showMenu(url, user, password, isAdmin, userID);
                 break;
-            case "2":
+            case 2:
                 showBooks(url, user, password);
                 loanBook(url, user, password, userID, isAdmin);
                 showMenu(url, user, password, isAdmin, userID);
                 break;
-            case "3":
+            case 3:
                 unloanBook(url, user, password, userID, isAdmin);
                 showMenu(url, user, password, isAdmin, userID);
                 break;
-            case "4":
+            case 4:
                 //Current loans
                 seeLoanedBooks(url, user, password, userID);
                 showMenu(url, user, password, isAdmin, userID);
 
                 break;
-            case "5":
-                //add a book
+            case 5:
+                addBook(url, user, password);
                 showMenu(url, user, password, isAdmin, userID);
                 break;
-            case "6":
+            case 6:
 
                 deleteBook(url, user, password);
                 showMenu(url, user, password, isAdmin, userID);
                 break;
-            case "7":
+            case 7:
                 //all books
                 showMenu(url, user, password, isAdmin, userID);
                 break;
-            case "0":
+            case 0:
                 return;
             default:
                 System.out.println("Invalid choice, try again");
@@ -203,6 +214,32 @@ public class ConsoleMenu {
         };
     }
 
+    private void addBook (String url, String user, String password){
+        sc.nextLine(); //read all to empty scanner.
+        System.out.println("Enter book title: ");
+        String title = sc.nextLine();
+        System.out.println("Enter book author: ");
+        String author = sc.nextLine();
+        System.out.println("Book to add: " + title + " : " + author + ". Do you want to proceed to add the book (Y) or quit (QUIT)?" );
+        String choice = sc.next();
+        if (choice.equals("QUIT")) {
+            return;
+        }else if (choice.equals("Y")) {
+            try{
+                Connection connection = DriverManager.getConnection(url, user, password);
+                String query = "insert into books (title, author, available) values (?, ?, 'available')";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, title);
+                preparedStatement.setString(2, author);
+
+                Integer int1 = preparedStatement.executeUpdate();
+                System.out.println("The book is added");
+
+            }catch(SQLException e) {
+                System.out.println("Data connection error");
+            };
+        }
+    }
 
     private void deleteBook(String url, String user, String password) {
         showBooks(url, user, password);
