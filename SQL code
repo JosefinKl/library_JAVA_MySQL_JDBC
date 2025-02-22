@@ -1,0 +1,47 @@
+create database library;
+use library;
+
+create table books (
+id INT auto_increment, 
+title TEXT, 
+author TEXT, 
+available TEXT,
+primary key (id)
+);
+create table loans (
+id INT auto_increment, 
+user_id INT, 
+book_id INT, 
+loan_date DATE, 
+return_date DATE,
+primary key (id),
+foreign key (book_id) references books(id),
+foreign key (user_id) references users(id)
+);
+
+create table users (
+id INT auto_increment,
+user_name TEXT,
+passwordUser TEXT,
+primary key (id)
+);
+
+insert into users (user_name, passwordUser) values 
+("josefin", "123"),
+("adan", "123"),
+("admin", "admin1");
+
+insert into books (title, author, available) values 
+("1984", "George Orwell", "available"), 
+("To Kill a Mockingbird", "Harper Lee", "available"), 
+("Pride and Prejudice", "Jane Austen", "available"), 
+("The Great Gatsby", "F. Scott Fitzgerald", "available"), 
+("Moby-Dick", "Herman Melville", "available"), 
+("War and Peace", "Leo Tolstoy", "available"), 
+("Pippi Långstrump", "Astrid Lindgren", "available"), 
+("Emil i Lönneberga", "Astrid Lindgren", "available"), 
+("Karlsson på taket", "Astrid Lindgren", "available");
+
+select * from loans;
+select * from books;
+select * from users;
