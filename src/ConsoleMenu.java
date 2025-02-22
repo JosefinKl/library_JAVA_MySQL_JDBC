@@ -15,13 +15,14 @@ public class ConsoleMenu {
     public void showMenu (String url, String user, String password, String isAdmin, Integer userID){
         System.out.println("----Menu----");
         System.out.println("1. All books");
-        System.out.println("2. Loan a book");
-        System.out.println("3. Return a book");
-        System.out.println("4. Current loans");
-        if (isAdmin == "true"){
+        if(isAdmin == "false") {
+            System.out.println("2. Loan a book");
+            System.out.println("3. Return a book");
+            System.out.println("4. Current loans");
+        } else if (isAdmin == "true"){
             System.out.println("5. Add book");
             System.out.println("6. Remove book");
-            System.out.println("7. List all books");
+
         }
         System.out.println("0. Avsluta");
 
@@ -64,10 +65,6 @@ public class ConsoleMenu {
             case 6:
 
                 deleteBook(url, user, password);
-                showMenu(url, user, password, isAdmin, userID);
-                break;
-            case 7:
-                //all books
                 showMenu(url, user, password, isAdmin, userID);
                 break;
             case 0:
