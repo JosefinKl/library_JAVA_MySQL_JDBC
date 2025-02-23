@@ -275,6 +275,18 @@ public class ConsoleMenu {
             }
             if (bookPartOfList) {
 
+                //Remove book from loans if it is loaned at the time for deletion (for example if the loaner lost the book)
+                try{
+                    Connection connection = DriverManager.getConnection(url, user, password);
+                    String query = "DELETE FROM loans WHERE book_id = ?";
+                    PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setInt(1, choiceID);
+                    Integer int1 = preparedStatement.executeUpdate();
+                } catch (SQLException e) {
+                    System.out.println("Data connection error");
+                }
+
+                //Remove book from books list
                 try {
                     Connection connection = DriverManager.getConnection(url, user, password);
                     String query = "delete from books where id = ?";
